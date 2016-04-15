@@ -44,14 +44,50 @@ data_dict = pickle.load( open("../final_project/final_project_dataset.pkl", "r")
 data_dict.pop("TOTAL", 0)
 
 
+lmin = 999999
+lmax = 1
+
+for i in data_dict:
+    if data_dict[i]['exercised_stock_options'] != 'NaN' and data_dict[i]['exercised_stock_options'] != 0:
+        if data_dict[i]['exercised_stock_options'] < lmin:
+            lmin = data_dict[i]['exercised_stock_options']
+        if data_dict[i]['exercised_stock_options'] > lmax:
+            lmax = data_dict[i]['exercised_stock_options']
+
+print lmax
+print lmin
+
 ### the input features we want to use 
 ### can be any key in the person-level dictionary (salary, director_fees, etc.) 
 feature_1 = "salary"
 feature_2 = "exercised_stock_options"
+#feature_3 = "total_payments"
 poi  = "poi"
 features_list = [poi, feature_1, feature_2]
 data = featureFormat(data_dict, features_list )
+
+salaryarray = []
+for i in range(124):
+    salaryarray.append(data[i][1])
+    
+stockarray = []
+for i in range(124):
+    stockarray.append(data[i][2])
+
+from sklearn.preprocessing import MinMaxScaler
+salscaler = MinMaxScaler()
+salaryminmax = salscaler.fit_transform(salaryarray)
+
+stockscaler = MinMaxScaler()
+stockminmax = stockscaler.fit_transform(stockarray)
+
+for i in range(124):
+     data[i][1] = salaryminmax[i]
+     data[i][2] = stockminmax[i]
+    
 poi, finance_features = targetFeatureSplit( data )
+
+
 
 
 ### in the "clustering with 3 features" part of the mini-project,
@@ -65,8 +101,9 @@ plt.show()
 ### cluster here; create predictions of the cluster labels
 ### for the data and store them to a list called pred
 
-
-
+from sklearn.cluster import KMeans
+cls = KMeans(n_clusters = 2)
+pred = cls.fit_predict(finance_features)
 
 ### rename the "name" parameter when you change the number of features
 ### so that the figure gets saved to a different file

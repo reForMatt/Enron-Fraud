@@ -19,4 +19,24 @@ import pickle
 
 enron_data = pickle.load(open("../final_project/final_project_dataset.pkl", "r"))
 
+sum1 = 0
 
+count = 0
+
+lmax = 1
+lmin = 999999
+
+for i in enron_data:
+    if enron_data[i]['salary'] != 'NaN' and enron_data[i]['salary'] != 0:
+        if enron_data[i]['salary'] < lmin:
+            lmin = enron_data[i]['salary']
+        if enron_data[i]['salary'] > lmax:
+            lmax = enron_data[i]['salary']
+ 
+print lmax
+print lmin       
+#print count
+
+#print len(enron_data)
+#percent = count/float(len(enron_data))
+#print percent
